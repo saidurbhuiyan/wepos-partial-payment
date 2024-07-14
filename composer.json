@@ -1,0 +1,22 @@
+{
+    "name": "saidur/wepos-partial-payment",
+    "description": "WooCommerce WePOS partial payment plugin",
+    "type": "wordpress-plugin",
+    "license": "GPL2",
+    "authors": [
+        {
+            "name": "saidur",
+            "email": "saidur3419@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.4",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "WePOS\\PartialPayment\\": "includes/"
+        }
+    }
+}
