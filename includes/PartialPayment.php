@@ -45,9 +45,9 @@ class PartialPayment {
 
 	public function order_partial_payment_stats( $order ) {
 		$order_id = $order->get_id();
-		$total_amount = $order->get_total();
 		$partial_payment_stats = get_partial_payment_stats( $order_id );
-        $total_paid = 0;
+        $total_paid = get_total_paid($order_id);
+        $total_amount = $order->get_total();
         ?>
         <fieldset>
             <legend>Order Partial Payment Statistics</legend>
@@ -66,15 +66,17 @@ class PartialPayment {
 			?>
 
 				<?php foreach ( $partial_payment_stats as $stat ) :
-				$total_paid += $stat->paid;
+                $due = $total_amount - $total_paid;
                 ?>
 					<tr>
 						<td class="woocommerce-table__product-name product-name"><?php echo esc_html( $stat->ID ); ?></td>
 						<td class="woocommerce-table__product-name product-name"><?php echo wc_price( $stat->paid ); ?></td>
-						<td class="woocommerce-table__product-name product-name"><?php echo wc_price( $total_amount - $total_paid ); ?></td>
+						<td class="woocommerce-table__product-name product-name"><?php echo wc_price( $due > 0 ? $due : 0 ); ?></td>
 						<td class="woocommerce-table__product-name product-name"><?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $stat->date_created ) ) ); ?></td>
 					</tr>
-				<?php endforeach; ?>
+				<?php
+                $total_paid -= $stat->paid;
+            endforeach; ?>
 
 			<?php
 		}
