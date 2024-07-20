@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * Get partial payment settings
+ * @return mixed
+ */
 function wepos_get_partial_payment_settings() {
 	if (!function_exists('wepos_get_settings_fields')) {
 		require_once WP_PLUGIN_DIR . '/wepos/includes/functions.php';
@@ -14,8 +19,18 @@ function wepos_get_partial_payment_settings() {
 		'options' => [
 			'yes' => __( 'Yes', 'wepos' ),
 			'no'  => __( 'No', 'wepos' ),
-		]
+		],
 	];
 
 	return apply_filters( 'wepos_settings_fields', $settings_fields );
 }
+
+/**
+ * Check if current user is an admin
+ * @return bool
+ */
+function is_current_user_admin ()
+{
+    return current_user_can( 'manage_woocommerce' ) && current_user_can( 'administrator' );
+}
+

@@ -27,7 +27,7 @@ if ( file_exists( PARTIAL_PATH . '/vendor/autoload.php' ) ) {
  * @return bool
  */
 function check_required_plugins() {
-	if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) || ! is_plugin_active( 'wepos/wepos.php' ) ) {
+	if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) || ! is_plugin_active( 'wepos/wepos.php' ) || !class_exists( '\WeDevs\WePOS\REST\Manager' ) || !class_exists('\WeDevs\WePOS\Admin\Settings')) {
 		// Deactivate the plugin.
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 
@@ -59,13 +59,16 @@ require_once PARTIAL_INCLUDES . '/functions.php';
  */
 function init_partial_payment() {
 	new \WePOS\PartialPayment\PartialPayment();
-	new \WePOS\PartialPayment\REST\Manager();
+	if (class_exists('\WeDevs\WePOS\REST\Manager')) {
+		new \WePOS\PartialPayment\REST\Manager();
+	}
+
 }
 
 add_action( 'plugins_loaded', 'init_partial_payment' );
 
 function init_classes() {
-	if (is_admin()){
+	if (is_admin() && class_exists('\WeDevs\WePOS\Admin\Settings')) {
 		new \WePOS\PartialPayment\Admin\Settings();
 	}
 }

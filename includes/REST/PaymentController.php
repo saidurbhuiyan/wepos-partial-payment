@@ -33,9 +33,9 @@ class PaymentController extends \WeDevs\WePOS\REST\PaymentController {
 
 		// partial payment
 		$order = wc_get_order( $request['id'] );
+		insert_partial_payment_stat($request['id'], $order->get_meta('_wepos_cash_paid_amount'));
 		if ($order->get_meta('_wepos_cash_payment_type') === 'partial') {;
 			$order->update_status( 'partial', __( 'Partial Payment collected via cash', 'wepos' ) );
-			insert_partial_payment_stat($request['id'], $order->get_meta('_wepos_cash_paid_amount'));
 
 			return rest_ensure_response(array(
 				'result'   => 'success',
