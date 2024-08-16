@@ -136,12 +136,12 @@ class PartialPayment
 	public function due_amount_on_order_details($orderData)
 	{
 		$order = wc_get_order($orderData);
-		$paid = (int) get_total_paid($order->get_id());
+		$paid = get_total_paid($order->get_id());
 
 		$due = $order->get_total() - $paid;
 
 		$html = '<tfoot>';
-		if ($due) {
+		if ($due > 0) {
 			$html .= '<tr><th class="label" scope="row">Due:</th>' . (is_int($orderData) ? '<td width="1%"></td>' : '') . '<td class="total">' . wc_price($due) . '</td></tr>';
 		}
 
@@ -224,11 +224,12 @@ class PartialPayment
 	{
 		if ('order_due_amount' === $column_name) {
 			$order = wc_get_order($post_id);
-			$paid = (int) get_total_paid($order->get_id());
+			$paid = get_total_paid($order->get_id());
 			$due = $order->get_total() - $paid;
+
 			$currency = is_callable([$order, 'get_currency']) ? $order->get_currency() : $order->order_currency;
 
-			echo wc_price($due, ['currency' => $currency]);
+			echo wc_price($due > 0 ? $due : 0, ['currency' => $currency]);
 		}
 	}
 
@@ -365,13 +366,13 @@ class PartialPayment
 		$order_id = $order->get_id();
 
 		// Calculate due amount
-		$paid = (int) get_total_paid($order_id); // Ensure this function exists and returns the correct amount
+		$paid = get_total_paid($order_id); // Ensure this function exists and returns the correct amount
 		$due = $order->get_total() - $paid;
 
 		// Output the input field
 		echo '<div id="woocommerce-form-partial-payment">
         <fieldset>
-        ' . (!is_admin() ? "<legend>Pay The Due Amount</legend>" : "") . '
+        ' . (!is_admin() && $due > 0 ? "<legend>Pay The Due Amount</legend>" : "") . '
           <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
                 <label for="partial_payment_amount">Partial Payment Amount</label>
                 <input class="woocommerce-Input woocommerce-Input--number input-number" type="number" step="0.01" min="1" max="' . esc_attr($due) . '" id="partial_payment_amount" name="partial_amount" value="' . esc_attr($due) . '" />
